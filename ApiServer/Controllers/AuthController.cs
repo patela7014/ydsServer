@@ -79,28 +79,42 @@ namespace ApiServer.Controllers
         // POST api/auth/register
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody]UserRegistration model)
+        public async Task<IActionResult> Register([FromBody]UserRegistration[] modelArr)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var userIdentity = mapper.Map<UserRegistration, User>(model);
+            //var userIdentity = mapper.Map<UserRegistration, User>(model);
             //repository.Add(userIdentity);
-            var result = await _userManager.CreateAsync(userIdentity, model.Password);
-            if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+            //var result = await _userManager.CreateAsync(userIdentity, model.Password);
+            //if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
 
-            //foreach (UserRegistration model in modelArr)
-            //{
-            //    var userIdentity = mapper.Map<UserRegistration, User>(model);
-            //    //repository.Add(userIdentity);
-            //    var result = await _userManager.CreateAsync(userIdentity, model.Password);
-            //    //if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
-            //}
-            await unitOfWork.CompleteAsync();
-            return Ok(result);
+            foreach (UserRegistration model in modelArr)
+            {
+                var userIdentity = mapper.Map<UserRegistration, User>(model);
+                //repository.Add(userIdentity);
+                if (!UserExists(userIdentity.Email))
+                {
+                    var result = await _userManager.CreateAsync(userIdentity, model.Password);
+                    //if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+                    await unitOfWork.CompleteAsync();
+                }
+            }
+            return NoContent();
 
+        }
+
+        private bool UserExists(string name)
+        {
+            var userToVerify = _userManager.FindByNameAsync(name);
+
+            if (userToVerify == null)
+            {
+                return false;
+            }
+            return true;
         }
     }
 

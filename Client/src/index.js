@@ -42,7 +42,7 @@ ReactDOM.render(
           <Route exact path="/events/:event_id/sabha/:sabha_id/attendance" component={Attendance}/>
           <Route exact path="/events/add" component={AddEvent}/>
           <Route exact path="/events" component={EventsList}/>
-          <Route exact path="/user/:family_id/:user_id" component={UserDetails}/>
+          <Route exact path="/users/:user_id" component={UserDetails}/>
       </div>
     </Router>
   </Provider>

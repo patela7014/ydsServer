@@ -7,10 +7,10 @@ import {
   FETCH_MESSAGE
 } from './types';
 
-export const ROOT_URL = 'http://localhost:51013/api';
+export const ROOT_URL = 'http://dasapiserver.azurewebsites.net/api';
 
 const usersListURI = ROOT_URL+'/users';
-const userDetailsBaseURI = ROOT_URL+'/user';
+const userDetailsBaseURI = ROOT_URL+'/users';
 
 const eventsListURI = ROOT_URL+'/events';
 const sabhaListURI = ROOT_URL+'/sabhas';
@@ -61,17 +61,17 @@ export const saveEventAttendance = (eventId, included, excluded) => (dispatch) =
         })
 };
 
-export const viewUser = (familyId, userId, callback) => (dispatch) => {
-    axios.get(userDetailsBaseURI+"/"+familyId+"/"+userId)
+export const viewUser = (userId, callback) => (dispatch) => {
+    axios.get(userDetailsBaseURI+"/"+userId)
         .then((res) => {
-            const userDetails = res.data.user_data;
+            const userDetails = res.data;
             callback(userDetails);
             dispatch({ type: "VIEW_USER", payload: userDetails })
         })
 };
 
 export const updateUser = (data, callback) => (dispatch) => {
-    axios.post(userDetailsBaseURI+"/"+data.u_id, {
+    axios.post(userDetailsBaseURI+"/"+data.id, {
         user: data
     })
         .then((res) => {
@@ -81,7 +81,7 @@ export const updateUser = (data, callback) => (dispatch) => {
 };
 
 export const login = (data, callback) => (dispatch) => {
-    axios.post(userDetailsBaseURI+"/"+data.u_id, {
+    axios.post(userDetailsBaseURI+"/"+data.id, {
         user: data
     })
         .then((res) => {

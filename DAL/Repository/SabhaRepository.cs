@@ -36,6 +36,8 @@ namespace DAL.Repository
         public IQueryable<Sabha> FindBy(Expression<Func<Sabha, bool>> predicate)
         {
             return context.Sabha
+                .Include(s => s.Users)
+                    .ThenInclude(su => su.User)
                 .Include(s => s.SabhaType)
                 .AsQueryable()
                 .Where(predicate);

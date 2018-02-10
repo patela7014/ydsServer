@@ -5,13 +5,14 @@ import {bindActionCreators} from 'redux';
 import Menu from '../components/menu';
 import {ROOT_URL} from '../actions/index';
 
-class UserDetails extends React.Component{
+class UserDetails extends React.Component{ 
 
     static propTypes = {
         history: PropTypes.object.isRequired
     }
 
     componentDidMount() {
+console.log("loaded");
         if(this.props.isAuthenticated){
             this.getUserDetails();
         }else{
@@ -21,21 +22,21 @@ class UserDetails extends React.Component{
 
     getUserDetails(){
         const {user_id, family_id} = this.props.match.params;
-        this.props.viewUser(family_id,user_id, (userData)=>{this.setState({userData})} );
+        this.props.viewUser(user_id, (userData)=>{this.setState({userData})} );
     }
 
     setDefaultObject(){
         let defaultData = {
-            profile_picture : '',
-            u_id : '',
-            first_name : '',
-            mid_name : '',
-            last_name : '',
+            pictureUrl : '',
+            id : '',
+            firstName : '',
+            midName : '',
+            lastName : '',
             email : '',
-            cell_phone : '',
+            phoneNumber : '',
             home_phone : '',
-            birth_month : '',
-            birth_day : '',
+            birthMonth : '',
+            birthDay : '',
             street : '',
             apt : '',
             city : '',
@@ -69,7 +70,7 @@ class UserDetails extends React.Component{
         e.preventDefault();
         let currentState = this.state.userData;
         currentState.imagePreviewUrl = '';
-        currentState.profile_picture = '';
+        currentState.pictureUrl = '';
         this.setState({userData : currentState})
 
     }
@@ -94,12 +95,12 @@ class UserDetails extends React.Component{
             let imageFormData = new FormData();
 
             imageFormData.append('imageFile', imageFile);
-            imageFormData.append('imageName', this.state.userData.profile_picture);
+            imageFormData.append('imageName', this.state.userData.pictureUrl);
             imageFormData.append('userData', JSON.stringify(this.state.userData));
 
             var xhr = new XMLHttpRequest();
 
-            xhr.open("POST", ROOT_URL+'/user/'+this.state.userData.u_id, true);
+            xhr.open("POST", ROOT_URL+'/user/'+this.state.userData.id, true); 
             xhr.onload = function () {
                 if (this.status == 200) {
                     resolve(this.response);
@@ -118,18 +119,18 @@ class UserDetails extends React.Component{
         // const { userDetails } = this.props;
 
         let {imagePreviewUrl} = this.state.userData;
-        let {profile_picture} = this.state.userData;
+        let {pictureUrl} = this.state.userData;
 
         let $imagePreview = null;
         if (imagePreviewUrl !== undefined && imagePreviewUrl !== '') {
             $imagePreview = (<img src={imagePreviewUrl} style={{height: 140}} alt="..."/>);
-        }else if(profile_picture){
-            $imagePreview = (<img src={"/public/uploads/"+profile_picture+"?"+new Date().getTime()} style={{height: 140}} alt="..."/>);
+        }else if(pictureUrl){
+            $imagePreview = (<img src={"/public/uploads/"+pictureUrl+"?"+new Date().getTime()} style={{height: 140}} alt="..."/>);
         }else{
             $imagePreview = (<img className="img-circle" src="http://placehold.it/200x150" alt="..."/>);
         }
 
-        if(profile_picture){
+        if(pictureUrl){
             return(
                 <div className="fileinput fileinput-exists" data-provides="fileinput">
                     <input type="hidden" value="" name="" />
@@ -140,7 +141,7 @@ class UserDetails extends React.Component{
 											<span className="btn btn-white btn-file">
 												<span className="fileinput-new">Select image</span>
 												<span className="fileinput-exists">Change</span>
-                                                <input type="file" onChange={this._handleImageChange.bind(this)} className="_user_profile" name="profile_picture" accept="image/*" />
+                                                <input type="file" onChange={this._handleImageChange.bind(this)} className="_user_profile" name="pictureUrl" accept="image/*" />
 											</span>
                         <a href="#" className="btn btn-orange fileinput-exists" onClick={this.removeImage.bind(this)} data-dismiss="fileinput">Remove</a>
                     </div>
@@ -156,7 +157,7 @@ class UserDetails extends React.Component{
 											<span className="btn btn-white btn-file">
 												<span className="fileinput-new">Select image</span>
 												<span className="fileinput-exists">Change</span>
-                                                <input type="file" onChange={this._handleImageChange.bind(this)} className="_user_profile" name="profile_picture" accept="image/*" />
+                                                <input type="file" onChange={this._handleImageChange.bind(this)} className="_user_profile" name="pictureUrl" accept="image/*" />
 											</span>
                         <a href="#" className="btn btn-orange fileinput-exists" onClick={this.removeImage.bind(this)} data-dismiss="fileinput">Remove</a>
                     </div>
@@ -178,10 +179,13 @@ class UserDetails extends React.Component{
         this.setState({userData});
     }
 
+    
+
     render(){
         let user = this.state.userData;
+console.log('gg', this.state)
         return(
-            <form className="form-horizontal" id="_user_profile_form" encType="multipart/form-data" action={"/user/"+user.u_id}  onSubmit={this.handleSubmit.bind(this)}>
+            <form className="form-horizontal" id="_user_profile_form" encType="multipart/form-data" action={"/user/"+user.id}  onSubmit={this.handleSubmit.bind(this)}>
                 <div className="profile-env">
                     <section className="profile-info-tabs">
                         <div className="row">
@@ -191,7 +195,7 @@ class UserDetails extends React.Component{
                                         <div className="pv-lg">
                                             {this.renderImage(user)}
                                         </div>
-                                        <h3 className="m0 text-bold">{user.first_name} {user.last_name}</h3>
+                                        <h3 className="m0 text-bold">{user.firstName} {user.lastName}</h3>
                                         <div className="mv-lg">
                                             <p>{user.description}</p>
                                         </div>
@@ -237,21 +241,21 @@ class UserDetails extends React.Component{
                                             <div className="col-lg-2"></div>
                                             <div className="col-lg-8">
                                                 <div className="form-group">
-                                                    <label htmlFor="first_name" className="col-sm-4 control-label">First Name</label>
+                                                    <label htmlFor="firstName" className="col-sm-4 control-label">First Name</label>
                                                     <div className="col-sm-8">
-                                                        <input id="first_name" name="first_name" type="text" placeholder="First Name" onChange={this.handleChange.bind(this)} value={user.first_name || ''} className="form-control"/>
+                                                        <input id="firstName" name="firstName" type="text" placeholder="First Name" onChange={this.handleChange.bind(this)} value={user.firstName || ''} className="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="mid_name" className="col-sm-4 control-label">Middle Name</label>
+                                                    <label htmlFor="midName" className="col-sm-4 control-label">Middle Name</label>
                                                     <div className="col-sm-8">
-                                                        <input id="mid_name" name="mid_name" type="text" placeholder="Middle Name" onChange={this.handleChange.bind(this)} value={user.mid_name || ''} className="form-control"/>
+                                                        <input id="midName" name="midName" type="text" placeholder="Middle Name" onChange={this.handleChange.bind(this)} value={user.midName || ''} className="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="last_name" className="col-sm-4 control-label">Last Name</label>
+                                                    <label htmlFor="lastName" className="col-sm-4 control-label">Last Name</label>
                                                     <div className="col-sm-8">
-                                                        <input id="last_name" name="last_name" type="text" placeholder="Last Name" onChange={this.handleChange.bind(this)} value={user.last_name || ''} className="form-control"/>
+                                                        <input id="lastName" name="lastName" type="text" placeholder="Last Name" onChange={this.handleChange.bind(this)} value={user.lastName || ''} className="form-control"/>
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
@@ -261,23 +265,16 @@ class UserDetails extends React.Component{
                                                     </div>
                                                 </div>
                                                 <div className="form-group">
-                                                    <label htmlFor="cell_phone" className="col-sm-4 control-label">Cell Phone</label>
+                                                    <label htmlFor="phoneNumber" className="col-sm-4 control-label">Cell Phone</label>
                                                     <div className="col-sm-8">
-                                                        <input id="cell_phone" name="cell_phone" placeholder="Cell Phone" type="text" onChange={this.handleChange.bind(this)} value={user.cell_phone || ''} className="form-control"/>
+                                                        <input id="phoneNumber" name="phoneNumber" placeholder="Cell Phone" type="text" onChange={this.handleChange.bind(this)} value={user.phoneNumber || ''} className="form-control"/>
                                                     </div>
                                                 </div>
-
+                                           
                                                 <div className="form-group">
-                                                    <label htmlFor="home_phone" className="col-sm-4 control-label">Home Phone</label>
+                                                    <label htmlFor="birthDay" className="col-sm-4 control-label">Birth Date (mm/dd)</label>
                                                     <div className="col-sm-8">
-                                                        <input id="home_phone" name="home_phone" placeholder="Home Phone" type="text" onChange={this.handleChange.bind(this)} value={user.home_phone || ''} className="form-control"/>
-                                                    </div>
-                                                </div>
-
-                                                <div className="form-group">
-                                                    <label htmlFor="birth_date" className="col-sm-4 control-label">Birth Date (mm/dd)</label>
-                                                    <div className="col-sm-8">
-                                                        <input id="birth_date" name="birth_date" placeholder="mm/dd" type="text"  value={user.birth_month+"/"+user.birth_day || ''} onChange={this.handleChange.bind(this)} className="form-control"/>
+                                                        <input id="birthDay" name="birthDay" placeholder="mm/dd" type="text"  value={user.birth_month+"/"+user.birth_day || ''} onChange={this.handleChange.bind(this)} className="form-control"/>
                                                     </div>
                                                 </div>
 

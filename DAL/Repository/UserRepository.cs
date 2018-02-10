@@ -21,7 +21,7 @@ namespace DAL.Repository
 
         public void Add(User entity)
         {
-            throw new NotImplementedException();
+            context.User.Add(entity);
         }
 
         public void Delete(User entity)

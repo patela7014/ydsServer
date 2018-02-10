@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\ApiServerAtmiya - Web Deploy.pubxml" />
     <None Remove="Properties\PublishProfiles\ApiServerDas - Web Deploy.pubxml" />
+    <None Remove="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
 
   <ItemGroup>

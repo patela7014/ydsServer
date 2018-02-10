@@ -53,14 +53,17 @@ namespace ApiServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var sabha = await _context.Sabha.SingleOrDefaultAsync(m => m.Id == id);
+            var sabhaData = repository.FindBy(c => c.Id == id);
+            var sabha = await sabhaData.SingleOrDefaultAsync();
 
-            if (sabha == null)
+            var result = mapper.Map<Sabha, SabhaListResource>(sabha);
+
+            if (result == null)
             {
                 return NotFound();
             }
 
-            return Ok(sabha);
+            return Ok(result);
         }
 
         // PUT: api/Sabhas/5
@@ -116,6 +119,23 @@ namespace ApiServer.Controllers
             var sabhaData = repository.FindBy(c => c.Id == sabhaSave.Id);
             var sabhaAdded = await sabhaData.SingleOrDefaultAsync();
             var result = mapper.Map<Sabha, SabhaAddResource>(sabhaAdded);
+            return Ok(result);
+        }
+
+        // POST: api/Sabhas
+        [HttpPost("{id}/users")]
+        public async Task<IActionResult> AddUsersToSabha([FromBody] AddSabhaUserResource sabhaUser)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var sabhaData = repository.FindBy(c => c.Id == sabhaUser.SabhaId);
+            var sabhaAdded = await sabhaData.SingleOrDefaultAsync();
+            var sabhaUsersSave = mapper.Map<AddSabhaUserResource, Sabha>(sabhaUser, sabhaAdded);
+        
+            await unitOfWork.CompleteAsync();
+            var result = mapper.Map<Sabha, SabhaListResource>(sabhaUsersSave);
             return Ok(result);
         }
 

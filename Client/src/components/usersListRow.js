@@ -1,7 +1,15 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import moment from 'moment';
 class UsersListRow extends React.Component{
 
+    formattedDate(month) {
+        if (month >0) {
+            return moment(month, 'MM').format('MMMM');
+        } else {
+            return '';
+        }
+    }
     rowData(user){
         return (
             <tr key={user.id}>
@@ -43,7 +51,7 @@ class UsersListRow extends React.Component{
                                 <div className="clear"></div>
 
                                 <div className="col-sm-4">
-                                    <i className="entypo-back-in-time"></i> Birth Date : {user.birthMonth}/{user.birthDay}
+                                    <i className="entypo-back-in-time"></i> Birth Date : {this.formattedDate(user.birthMonth)} {user.birthDay}
                                 </div>
 
                                 

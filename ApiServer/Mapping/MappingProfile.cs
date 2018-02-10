@@ -54,6 +54,25 @@ namespace ApiServer.Mapping
                     }
                 })
                 .ReverseMap();
+
+            CreateMap<AddSabhaUserResource, Sabha>()
+                .ForMember(e => e.Users, opt => opt.Ignore())
+                .AfterMap((a, e) => {
+                    // Remove unselected Users
+                    var removedUsers = e.Users.Where(u => a.ExcludedUsers.Contains(u.UserId)).ToList();
+                    foreach (var f in removedUsers)
+                    {
+                        e.Users.Remove(f);
+                    }
+
+                    // Add new Users
+                    var addedUsers = a.IncludedUsers.Where(id => !e.Users.Any(u => u.UserId == id)).Select(id => new SabhaUsers { UserId = id }).ToList();
+                    foreach (var f in addedUsers)
+                    {
+                        e.Users.Add(f);
+                    }
+                })
+                .ReverseMap();
         }
 
     }

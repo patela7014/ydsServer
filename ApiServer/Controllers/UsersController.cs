@@ -10,6 +10,7 @@ using DAL.Persistence;
 using DAL.Repository;
 using AutoMapper;
 using DAL.Resources;
+using DAL.Core;
 
 namespace ApiServer.Controllers
 {
@@ -17,12 +18,14 @@ namespace ApiServer.Controllers
     [Route("api/Users")]
     public class UsersController : Controller
     {
+        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ApiContext _context;
         private readonly IRepository<User> repository;
 
-        public UsersController(IMapper mapper, ApiContext context, IRepository<User> repository)
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper, ApiContext context, IRepository<User> repository)
         {
+            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             _context = context;
             this.repository = repository;
@@ -97,17 +100,20 @@ namespace ApiServer.Controllers
 
         // POST: api/Users
         [HttpPost]
-        public async Task<IActionResult> PostUser([FromBody] User user)
+        public async Task<IActionResult> PostUser([FromBody] UserRegistration[] modelArr)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
-            _context.User.Add(user);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            foreach (UserRegistration model in modelArr)
+            {
+                var userIdentity = mapper.Map<UserRegistration, User>(model);
+                userIdentity.Id = repository.GenerateID();
+                repository.Add(userIdentity);
+                await unitOfWork.CompleteAsync();
+            }
+            return NoContent();
         }
 
         // DELETE: api/Users/5
