@@ -16,7 +16,7 @@ class UsersListRow extends React.Component{
                 <td>
                     <div className="member-entry">
 
-                        <a href={"/user/"+user.id} className="member-img">
+                        <a href={"/users/"+user.id} className="member-img">
                             {user.pictureUrl ?
                                 (
                                     <img src={"/public/uploads/"+user.pictureUrl} className="img-rounded"  alt="..."/>
@@ -31,7 +31,7 @@ class UsersListRow extends React.Component{
 
                         <div className="member-details">
                             <h4>
-                                <Link to={"/user/"+user.id}>{user.firstName} {user.lastName}</Link>
+                                <Link to={"/users/"+user.id}>{user.firstName} {user.lastName}</Link>
                             </h4>
 
                             <div className="row info-list">

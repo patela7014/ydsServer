@@ -1,5 +1,6 @@
 ﻿using DAL.Core.Models;
 using DAL.Persistence;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,10 @@ namespace DAL.Repository
 
         public IQueryable<User> FindBy(Expression<Func<User, bool>> predicate)
         {
-            throw new NotImplementedException();
+            return context.User
+                .Include(u => u.Address)
+                .AsQueryable()
+                .Where(predicate);
         }
 
         public string GenerateID()

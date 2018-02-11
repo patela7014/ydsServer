@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace DAL.Resources
@@ -20,5 +21,10 @@ namespace DAL.Resources
         // public string BirthYear { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public ICollection<AddressResource> Address { get; set; }
+        public UsersListResource()
+        {
+            Address = new Collection<AddressResource>();
+        }
     }
 }

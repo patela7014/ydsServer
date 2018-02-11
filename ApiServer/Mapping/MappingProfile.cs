@@ -17,7 +17,7 @@ namespace ApiServer.Mapping
             CreateMap<AddressResource, Address>()
                 .ReverseMap();
 
-            CreateMap<UsersListResource, User>()
+            CreateMap<User, UsersListResource>()
                 .ReverseMap();
 
             CreateMap<EventAddResource, Event>()

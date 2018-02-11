@@ -22,7 +22,10 @@ console.log("loaded");
 
     getUserDetails(){
         const {user_id, family_id} = this.props.match.params;
-        this.props.viewUser(user_id, (userData)=>{this.setState({userData})} );
+        this.props.viewUser(user_id, (userData) => {
+            console.log('userrs', userData)
+            this.setState({ userData })
+        });
     }
 
     setDefaultObject(){
@@ -100,7 +103,7 @@ console.log("loaded");
 
             var xhr = new XMLHttpRequest();
 
-            xhr.open("POST", ROOT_URL+'/user/'+this.state.userData.id, true); 
+            xhr.open("POST", ROOT_URL+'/users/'+this.state.userData.id, true); 
             xhr.onload = function () {
                 if (this.status == 200) {
                     resolve(this.response);
@@ -185,7 +188,7 @@ console.log("loaded");
         let user = this.state.userData;
 console.log('gg', this.state)
         return(
-            <form className="form-horizontal" id="_user_profile_form" encType="multipart/form-data" action={"/user/"+user.id}  onSubmit={this.handleSubmit.bind(this)}>
+            <form className="form-horizontal" id="_user_profile_form" encType="multipart/form-data" action={"/users/"+user.id}  onSubmit={this.handleSubmit.bind(this)}>
                 <div className="profile-env">
                     <section className="profile-info-tabs">
                         <div className="row">

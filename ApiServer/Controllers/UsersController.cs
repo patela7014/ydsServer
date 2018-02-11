@@ -53,14 +53,17 @@ namespace ApiServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = await _context.User.SingleOrDefaultAsync(m => m.Id == id);
+            var userData = repository.FindBy(c => c.Id == id);
+            var user = await userData.SingleOrDefaultAsync();
+
+            var result = mapper.Map<User, UsersListResource>(user);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(user);
+            return Ok(result);
         }
 
         // PUT: api/Users/5
