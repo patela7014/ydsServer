@@ -11,6 +11,10 @@ namespace ApiServer.Mapping
         {
             // Domain to API Resouce with Reverse
             CreateMap<UserRegistration, User>()
+                .ForMember(u => u.Address, opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<AddressResource, Address>()
                 .ReverseMap();
 
             CreateMap<UsersListResource, User>()

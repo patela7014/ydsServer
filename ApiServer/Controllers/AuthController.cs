@@ -22,15 +22,17 @@ namespace ApiServer.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IRepository<User> repository;
+        private readonly IRepository<Address> addressRepository;
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
-
-        public AuthController(IUnitOfWork unitOfWork, IMapper mapper, IRepository<User> repository, UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+        private static readonly Random getrandom = new Random();
+        public AuthController(IUnitOfWork unitOfWork, IMapper mapper, IRepository<User> repository, IRepository<Address> addressRepository, UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             this.repository = repository;
+            this.addressRepository = addressRepository;
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
@@ -93,14 +95,24 @@ namespace ApiServer.Controllers
 
             foreach (UserRegistration model in modelArr)
             {
+                model.Password = "dasnadas";
                 var userIdentity = mapper.Map<UserRegistration, User>(model);
-                //repository.Add(userIdentity);
-                if (!UserExists(userIdentity.Email))
+                if (userIdentity.Email == null || userIdentity.Email == "")
                 {
-                    var result = await _userManager.CreateAsync(userIdentity, model.Password);
-                    //if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
-                    await unitOfWork.CompleteAsync();
+                    userIdentity.Email = $"testing{getrandom.Next(1, 100000)}@gmail.com";
                 }
+                userIdentity.UserName = userIdentity.Email;
+                var result = await _userManager.CreateAsync(userIdentity, model.Password);
+
+                if (userIdentity.Id != null)
+                {
+                    var newAddressResource = new AddressResource {Id = addressRepository.GenerateID(), City = model.City, Country = model.Country, IsActive = true, State = model.State, Street = $"{model.Street} {model.Apt}" };
+                    var newAddress = mapper.Map<AddressResource, Address>(newAddressResource);
+                    newAddress.UserId = userIdentity.Id;
+                    addressRepository.Add(newAddress);
+                }
+                //if (!result.Succeeded) return new BadRequestObjectResult(Errors.AddErrorsToModelState(result, ModelState));
+                await unitOfWork.CompleteAsync();
             }
             return NoContent();
 

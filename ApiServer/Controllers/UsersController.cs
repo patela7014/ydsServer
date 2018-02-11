@@ -36,7 +36,7 @@ namespace ApiServer.Controllers
         public async Task<IEnumerable<UsersListResource>> GetUser()
         {
             var users = this.repository.GetAll();
-
+            users = users.OrderBy(u => u.Created);
             var allUsers = await users.ToListAsync();
 
             var result = mapper.Map<IEnumerable<User>, IEnumerable<UsersListResource>>(allUsers);

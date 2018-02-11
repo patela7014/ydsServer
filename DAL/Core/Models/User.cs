@@ -40,10 +40,12 @@ namespace DAL.Core.Models
         public ICollection<SabhaUsers> Sabhas { get; set; }
         public ICollection<EventAttendance> Attendance { get; set; }
 
+        public ICollection<Address> Address { get; set; }
         public User()
         {
             Sabhas = new Collection<SabhaUsers>();
             Attendance = new Collection<EventAttendance>();
+            Address = new Collection<Address>();
         }
     }
 }

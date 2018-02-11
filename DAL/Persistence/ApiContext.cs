@@ -16,6 +16,7 @@ namespace DAL.Persistence
         public virtual DbSet<SabhaType> SabhaType { get; set; }
         public virtual DbSet<SabhaUsers> SabhaUsers { get; set; }
         public virtual DbSet<EventAttendance> EventAttendance { get; set; }
+        public virtual DbSet<Address> Address { get; set; }
 
         public ApiContext(DbContextOptions<ApiContext> options) : base(options)
         {

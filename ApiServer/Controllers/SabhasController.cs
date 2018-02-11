@@ -22,13 +22,15 @@ namespace ApiServer.Controllers
         private readonly IMapper mapper;
         private readonly ApiContext _context;
         private readonly IRepository<Sabha> repository;
+        private readonly IRepository<User> userRepository;
 
-        public SabhasController(IUnitOfWork unitOfWork, IMapper mapper, ApiContext context, IRepository<Sabha> repository)
+        public SabhasController(IUnitOfWork unitOfWork, IMapper mapper, ApiContext context, IRepository<Sabha> repository, IRepository<User> userRepository)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
             _context = context;
             this.repository = repository;
+            this.userRepository = userRepository;
         }
 
         // GET: api/Sabhas
@@ -130,8 +132,20 @@ namespace ApiServer.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var users = userRepository.GetAll();
+
+            var allUsers = await users.ToListAsync();
+
             var sabhaData = repository.FindBy(c => c.Id == sabhaUser.SabhaId);
             var sabhaAdded = await sabhaData.SingleOrDefaultAsync();
+            List<string> usersList = new List<string>();
+            
+            foreach (var user in allUsers)
+            {
+                usersList.Add(user.Id);
+            }
+            sabhaUser.IncludedUsers = usersList;
             var sabhaUsersSave = mapper.Map<AddSabhaUserResource, Sabha>(sabhaUser, sabhaAdded);
         
             await unitOfWork.CompleteAsync();

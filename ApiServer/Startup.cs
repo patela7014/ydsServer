@@ -46,6 +46,7 @@ namespace ApiServer
             services.AddScoped(typeof(IRepository<SabhaType>), typeof(SabhaTypeRepository));
             services.AddScoped(typeof(IRepository<EventAttendance>), typeof(AttendanceRepository));
             services.AddScoped(typeof(ISabhaRepository), typeof(SabhaRepository));
+            services.AddScoped(typeof(IRepository<Address>), typeof(AddressRepository));
 
 
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));

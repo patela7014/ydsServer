@@ -19,5 +19,12 @@ namespace DAL.Resources
         public string BirthMonth { get; set; }
         public string Gender { get; set; }
         public string Designation { get; set; }
+        public string AddressId { get; set; }
+        public string Apt { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string Zip { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
     }
 }
